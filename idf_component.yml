@@ -1,0 +1,4 @@
+version: "1.0.0"
+description: SPI DMA led strip driver for WS28xx. Currently supports WS2812b and WS2815
+
+
