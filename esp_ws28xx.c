@@ -25,20 +25,35 @@ static spi_settings_t spi_settings = {
 };
 
 
-void ws28xx_init(int pin, led_strip_model_t model, int led_number) {
-	esp_err_t err;
+esp_err_t ws28xx_init(int pin, led_strip_model_t model, int led_number, CRGB** led_buffer_ptr) {
+	esp_err_t err = ESP_OK;
 	led_num = led_number;
 	led_model = model;
 	dma_buf_size = led_num * 12 + (reset_delay + 1) * 2; //12 bytes for each led + bytes for initial zero and reset state
 	ws28xx_pixels = malloc(sizeof(CRGB) * led_num);
+	if (ws28xx_pixels == NULL) {
+		return ESP_ERR_NO_MEM;
+	}
+	*led_buffer_ptr = ws28xx_pixels;
 	spi_settings.buscfg.mosi_io_num = pin;
 	spi_settings.buscfg.max_transfer_sz = dma_buf_size;
 	err = spi_bus_initialize(spi_settings.host, &spi_settings.buscfg, spi_settings.dma_chan);
-	ESP_ERROR_CHECK(err);
+	if (err != ESP_OK) {
+		free(ws28xx_pixels);
+		return err;
+	}
 	err = spi_bus_add_device(spi_settings.host, &spi_settings.devcfg, &spi_settings.spi);
-	ESP_ERROR_CHECK(err);
+	if (err != ESP_OK) {
+		free(ws28xx_pixels);
+		return err;
+	}
 	reset_delay = (model == WS2812B) ? 3 : 30; //insrease if something breaks. values are less that recommended in datasheets but seem stable
 	dma_buffer = heap_caps_malloc(dma_buf_size, MALLOC_CAP_DMA); // Critical to be DMA memory.
+	if (dma_buffer == NULL) {
+		free(ws28xx_pixels);
+		return ESP_ERR_NO_MEM;
+	}
+	return ESP_OK;
 }
 
 
@@ -49,7 +64,7 @@ void ws28xx_fill_color(CRGB color) {
 }
 
 
-void ws28xx_update() {
+esp_err_t ws28xx_update() {
 	uint16_t timing_bits[16] = {
 		0x1111,
 		0x7111,
@@ -102,5 +117,5 @@ void ws28xx_update() {
 		.length = dma_buf_size * 8,
 		.tx_buffer = dma_buffer,
 	});
-	ESP_ERROR_CHECK(err);
+	return err;
 }

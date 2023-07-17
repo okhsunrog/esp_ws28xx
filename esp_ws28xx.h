@@ -39,11 +39,10 @@ typedef enum {
     WS2815,
 } led_strip_model_t;
 
-extern CRGB* ws28xx_pixels;
 
-void ws28xx_init(int pin, led_strip_model_t model, int led_number);
+esp_err_t ws28xx_init(int pin, led_strip_model_t model, int led_number, CRGB** led_buffer_ptr);
 void ws28xx_fill_color(CRGB color);
-void ws28xx_update();
+esp_err_t ws28xx_update();
 
 
 #endif /* MAIN_ESP_WS28XX_H_ */
