@@ -1,9 +1,9 @@
 #ifndef MAIN_ESP_WS28XX_H_
 #define MAIN_ESP_WS28XX_H_
-#include <stdio.h>
-#include <string.h>
 #include "driver/gpio.h"
 #include "driver/spi_master.h"
+#include <stdio.h>
+#include <string.h>
 
 typedef struct {
     union {
@@ -42,7 +42,8 @@ typedef enum {
     WS2815,
 } led_strip_model_t;
 
-esp_err_t ws28xx_init(int pin, led_strip_model_t model, int num_of_leds, CRGB** led_buffer_ptr);
+esp_err_t ws28xx_init(int pin, led_strip_model_t model, int num_of_leds,
+                      CRGB **led_buffer_ptr);
 void ws28xx_fill_all(CRGB color);
 esp_err_t ws28xx_update();
 
