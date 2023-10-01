@@ -1,6 +1,6 @@
 # esp_ws28xx
 A light and simple ESP-IDF lib for WS2812B/WS2815 led strips. Works via SPI with DMA. 
-A fork of https://github.com/8-DK/ESP32_SPI_WS2812_idf/ with a lot of fixes, refactoring, improvements and flexability. Fixed bit format, added correct reset pulses and support of WS2815.
+A fork of https://github.com/8-DK/ESP32_SPI_WS2812_idf/ with a lot of fixes, refactoring, improvements, and higher flexibility. Fixed bit format, added correct reset pulses, and support of WS2815.
 Tested with esp-idf v5.1 and esp32-c3.
 
 # Example of usage
