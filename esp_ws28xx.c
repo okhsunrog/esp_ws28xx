@@ -36,6 +36,9 @@ esp_err_t ws28xx_init(int pin, led_strip_model_t model, int num_of_leds,
     esp_err_t err = ESP_OK;
     n_of_leds = num_of_leds;
     led_model = model;
+    // Insrease if something breaks. values are less than recommended in
+    // datasheets but seem stable
+    reset_delay = (model == WS2812B) ? 3 : 30;
     // 12 bytes for each led + bytes for initial zero and reset state
     dma_buf_size = n_of_leds * 12 + (reset_delay + 1) * 2;
     ws28xx_pixels = malloc(sizeof(CRGB) * n_of_leds);
@@ -57,9 +60,6 @@ esp_err_t ws28xx_init(int pin, led_strip_model_t model, int num_of_leds,
         free(ws28xx_pixels);
         return err;
     }
-    // Insrease if something breaks. values are less than recommended in
-    // datasheets but seem stable
-    reset_delay = (model == WS2812B) ? 3 : 30;
     // Critical to be DMA memory.
     dma_buffer = heap_caps_malloc(dma_buf_size, MALLOC_CAP_DMA);
     if (dma_buffer == NULL) {
