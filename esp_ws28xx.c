@@ -1,4 +1,5 @@
 #include "esp_ws28xx.h"
+#include "esp_heap_caps.h"
 
 uint16_t *dma_buffer;
 CRGB *ws28xx_pixels;
